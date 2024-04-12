@@ -7,6 +7,7 @@ config();
 
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
+import { UserEntity } from './user/entities/user.entity';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { UserModule } from './user/user.module';
         database: configService.get('POSTGRES_DATABASE'),
         synchronize: true,
         logging: true,
-        entities: [],
+        entities: [UserEntity],
       }),
       inject: [ConfigService],
     }),
