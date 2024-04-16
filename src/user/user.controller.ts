@@ -10,10 +10,11 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as jwt from 'jsonwebtoken';
 
 //контроллер для обработки HTTP-запросов и взаимодействия с сервисом.
-
-@Controller('users') //route group
+//route group
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -22,9 +23,14 @@ export class UserController {
     try {
       await this.userService.create(createUserDto);
 
+      const token = jwt.sign({ email: createUserDto.email }, 'secret', {
+        expiresIn: '1h',
+      });
+
       return {
         success: true,
         message: 'User Created Successfully',
+        token,
       };
     } catch (error) {
       return {
@@ -34,7 +40,7 @@ export class UserController {
     }
   }
 
-  @Get('all')
+  @Get()
   async findAll() {
     try {
       const data = await this.userService.findAll();

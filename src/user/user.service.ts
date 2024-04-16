@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
-
+import * as jwt from 'jsonwebtoken';
 // Служба, которая будет взаимодействовать с базой данных с помощью TypeORM
 
 @Injectable()
@@ -17,6 +17,10 @@ export class UserService {
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     const userData = await this.userRepository.create(createUserDto);
     return this.userRepository.save(userData);
+
+    const token = jwt.sign({ id: userData.id }, 'secret', { expresIn: '1h' });
+
+    return token;
   }
 
   async findAll(): Promise<UserEntity[]> {
